@@ -1,3 +1,4 @@
+from app.support.errors import DomainError
 from app.support.types import identifier, choice, utc_seconds, details_copy, EVENT_TYPES
 
 
@@ -8,6 +9,8 @@ class AuditEvent:
         self._entity_id=identifier(entity_id)
         self._timestamp=utc_seconds(timestamp)
         self._details=details_copy(details)
+        if "" in self._details:
+            raise DomainError("INVALID_DETAILS")
 
     @property
     def event_id(self):return self._event_id
@@ -22,4 +25,4 @@ class AuditEvent:
     def timestamp(self):return self._timestamp
 
     @property
-    def details(self):return self._details  # ЛР2: выходной снимок
+    def details(self):return dict(self._details)
