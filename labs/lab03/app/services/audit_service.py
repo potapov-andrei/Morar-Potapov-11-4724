@@ -1,6 +1,6 @@
-import json
 from app.domain.audit import AuditEvent
-from app.support.types import find_events,event_dict,iso_timestamp
+from app.domain.formatters import JsonAuditFormatter, TextAuditFormatter
+from app.support.types import find_events, format_result
 
 
 class AuditService:
@@ -15,7 +15,9 @@ class AuditService:
         return find_events(self._repository.all(),entity_id,event_type)
 
     def render(self,entity_id=None,event_type=None):
-        raise NotImplementedError("ЛР3: реализуйте AuditService.render по TASK.md")
+        formatter = JsonAuditFormatter() if self._mode == "json" else TextAuditFormatter()
+        events = self.find(entity_id=entity_id,event_type=event_type)
+        return tuple(format_result(formatter.format(event)) for event in events)
 
 def make_entity(*args, **kwargs):
     return AuditEvent(*args, **kwargs)
