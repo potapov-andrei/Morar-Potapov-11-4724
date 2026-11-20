@@ -18,10 +18,18 @@ class AuditService:
         raise NotImplementedError("ЛР5: реализуйте AuditService.render по TASK.md")
 
     def event_counts(self, entity_id=None):
-        raise NotImplementedError("ЛР5: реализуйте AuditService.event_counts по TASK.md")
+        counts = {}
+        for event in self.find(entity_id=entity_id):
+            event_type = event.event_type
+            counts[event_type] = counts.get(event_type, 0) + 1
+        return counts
 
     def latest_event(self, entity_id=None):
-        raise NotImplementedError("ЛР5: реализуйте AuditService.latest_event по TASK.md")
+        return max(
+            self.find(entity_id=entity_id),
+            key=lambda event: (event.timestamp, event.event_id),
+            default=None,
+        )
 
 def make_entity(*args, **kwargs):
     return AuditEvent(*args, **kwargs)
