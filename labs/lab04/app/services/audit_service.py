@@ -1,5 +1,5 @@
 from app.domain.audit import AuditEvent
-from app.domain.formatters import TextAuditFormatter, JsonAuditFormatter
+from app.domain.formatters import TextAuditFormatter, JsonAuditFormatter, XmlAuditFormatter
 from app.support.types import (
     Repository, choice, find_events, format_result, iso_timestamp,
 )
@@ -46,7 +46,11 @@ def view(entity):
 
 
 def new_service(repository=None, formatter=None, mode="text"):
-    choices = {"text": TextAuditFormatter, "json": JsonAuditFormatter}
+    choices = {
+        "text": TextAuditFormatter,
+        "json": JsonAuditFormatter,
+        "xml": XmlAuditFormatter,
+    }
     choice(mode, choices, "INVALID_CONFIG")
     formatter = choices[mode]() if formatter is None else formatter
     return AuditService(
